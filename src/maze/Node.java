@@ -47,6 +47,9 @@ public class Node {
 		return nodesNextCardinal;
 	}
 	
+	public int getDistance() {
+		return this.distance;
+	}
 	
 	
 	
