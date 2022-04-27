@@ -51,7 +51,15 @@ public class Node {
 		return this.distance;
 	}
 	
+	public boolean isRed() {
+		return this.isRedCircle;
+	}
 	
+	public String print() {
+		String result = "(" + this.x + "," + this.y +") ";
+		return result;
+		
+	}
 	
 	
 	
