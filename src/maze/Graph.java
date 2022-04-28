@@ -5,13 +5,14 @@ import java.util.Iterator;
 import java.util.Stack;
 
 public class Graph {
-	private Node[][] nodes;
-	private Node start;
-	private Node end;
+	private Node[][] nodes;				//all the nodes in a grid
+	private Node start;					//(1,1)
+	private Node end;					//(max_x,Max_y)
 	private int max_x;
 	private int max_y;
-	private boolean isSolved;
-	private ArrayList<Node> visited = new ArrayList<Node>();
+	private boolean isSolved;			//used in a recursive method
+	private ArrayList<Node> visitedDiagonal = new ArrayList<Node>();
+	private ArrayList<Node> visitedCardinal = new ArrayList<Node>();
 	
 	private Stack<Node>result = new Stack<Node>();
 	
@@ -35,7 +36,7 @@ public class Graph {
 		
 		this.nodes = new Node[max_x + 2][max_y + 2];
 		
-		
+		//next two loops read in and create all node objects
 		for(int i = 0; i < lines.length; i++) {
 			String[] currentLine = lines[i].split(" ");
  			for(int j = 0; j < currentLine.length; j++) {
@@ -64,9 +65,9 @@ public class Graph {
 	
 	private void populateAdjacencies() {
 		for(int i = 0; i <= this.max_x; i ++) {
-			for(int j = 0; j <= this.max_y; j++) {
+			for(int j = 0; j <= this.max_y; j++) {	//iterates through all nodes
 				Node current = this.nodes[i][j];
-				int distance = current.getDistance();
+				int distance = current.getDistance();	//adds all ajdacencies that exist for current node
 				if(j + distance < this.max_y + 1) {
 					current.addCardinal(this.nodes[i][j+distance]);
 				}
@@ -97,22 +98,34 @@ public class Graph {
 	
 	private void runGraph(Node current, boolean redCurrent) {
 		if(current == this.end) {
-			this.isSolved = true;
+			this.isSolved = true;		//base case
 			return;
 		}
 	
 		else {
-			this.visited.add(current);
+			ArrayList<Node>VisitedCurrent;
+			if(redCurrent) {
+				this.visitedDiagonal.add(current);
+				
+			}
+			else {
+				this.visitedCardinal.add(current);
+			
+			}
+			
 			ArrayList<Node>childTargets;
-			if(redCurrent != current.isRed()) {
-				redCurrent = !redCurrent;
+			if(current.isRed()) {
+				redCurrent = !redCurrent;		//flips directionality if node is red
 			}
 			if(redCurrent) {
 				childTargets = current.getNodesNextDiagonal();
+				VisitedCurrent = this.visitedDiagonal;
 			}
 			else {
 				childTargets = current.getNodesNextCardinal();
+				VisitedCurrent = this.visitedCardinal;
 			}
+			
 			
 		
 			for(int i = 0; i < childTargets.size(); i++) {
@@ -121,7 +134,7 @@ public class Graph {
 				}
 				else {
 					Node next = childTargets.get(i);
-					if(!this.visited.contains(next)) {
+					if(!VisitedCurrent.contains(next)) {
 						this.result.push(next);
 						runGraph(next, redCurrent);
 						if(!this.isSolved) {
